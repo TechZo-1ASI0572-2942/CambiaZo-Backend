@@ -5,6 +5,6 @@ import com.techzo.cambiazo.exchanges.interfaces.rest.resources.CreateExchangeRes
 
 public class CreateExchangeCommandFromResourceAssembler {
     public static CreateExchangeCommand toCommandFromResource(CreateExchangeResource resource) {
-        return new CreateExchangeCommand(resource.productOwnId(), resource.productChangeId(), resource.status());
+        return new CreateExchangeCommand(resource.productOwnId(), resource.productChangeId(), resource.status(), resource.locationId());
     }
 }

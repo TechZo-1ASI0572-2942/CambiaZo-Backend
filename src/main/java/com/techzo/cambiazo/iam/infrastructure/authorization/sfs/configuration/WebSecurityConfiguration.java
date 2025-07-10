@@ -121,6 +121,8 @@ public class WebSecurityConfiguration {
                                 "/api/v2/users",
                                 "/api/v2/users/**",
                                 "/api/v2/districts/**",
+                                "/api/v2/exchange-lockers",
+                                "/api/v2/exchange-lockers/**",
                                 "/v3/api-docs/**",
                                 "/swagger-ui.html",
                                 "/swagger-ui/**"

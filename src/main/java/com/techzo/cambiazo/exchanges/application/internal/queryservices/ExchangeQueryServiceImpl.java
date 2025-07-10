@@ -10,6 +10,9 @@ import com.techzo.cambiazo.exchanges.infrastructure.persistence.jpa.IProductRepo
 import com.techzo.cambiazo.iam.domain.model.aggregates.User;
 import com.techzo.cambiazo.iam.infrastructure.persistence.jpa.repositories.UserRepository;
 import com.techzo.cambiazo.iam.interfaces.rest.transform.UserResource2FromEntityAssembler;
+import com.techzo.cambiazo.lockers.domain.model.entities.Location;
+import com.techzo.cambiazo.lockers.infrastructure.persistence.jpa.IExchangeLockerRepository;
+import com.techzo.cambiazo.lockers.infrastructure.persistence.jpa.ILocationRepository;
 import org.springframework.stereotype.Service;
 
 import java.util.Comparator;
@@ -26,12 +29,16 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
 
     private final IProductRepository productRepository;
     private final UserRepository userRepository;
+    private final ILocationRepository locationRepository;
+    private final IExchangeLockerRepository exchangeLockerRepository;
 
 
-    public ExchangeQueryServiceImpl(IExchangeRepository exchangeRepository, UserRepository userRepository, IProductRepository productRepository) {
+    public ExchangeQueryServiceImpl(IExchangeRepository exchangeRepository, UserRepository userRepository, IProductRepository productRepository, ILocationRepository locationRepository, IExchangeLockerRepository exchangeLockerRepository) {
         this.exchangeRepository = exchangeRepository;
         this.userRepository = userRepository;
         this.productRepository = productRepository;
+        this.locationRepository = locationRepository;
+        this.exchangeLockerRepository = exchangeLockerRepository;
     }
 
 
@@ -47,6 +54,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
         User userChange = this.userRepository.findById(productChange.getUserId())
                 .orElseThrow(() -> new IllegalArgumentException("User not found"));
+        Location location = this.locationRepository.findById(exchange.getLocationId())
+                .orElseThrow(() -> new IllegalArgumentException("Location not found"));
 
         var userOwnResource = UserResource2FromEntityAssembler.toResourceFromEntity(userOwn);
         var userChangeResource = UserResource2FromEntityAssembler.toResourceFromEntity(userChange);
@@ -57,7 +66,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                         productOwn,
                         productChange,
                         userOwnResource,
-                        userChangeResource
+                        userChangeResource,
+                        location
                 )
         );
     }
@@ -86,7 +96,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                     .filter(user -> user.getId().equals(productChange.getUserId()))
                     .findFirst()
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
-
+            Location location = this.locationRepository.findById(exchange.getLocationId())
+                    .orElseThrow(() -> new IllegalArgumentException("Location not found"));
             var userOwnResource = UserResource2FromEntityAssembler.toResourceFromEntity(userOwn);
             var userChangeResource = UserResource2FromEntityAssembler.toResourceFromEntity(userChange);
 
@@ -95,7 +106,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                     productOwn,
                     productChange,
                     userOwnResource,
-                    userChangeResource
+                    userChangeResource,
+                    location
             );
         }).collect(Collectors.toList());
     }
@@ -121,14 +133,16 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                     .orElseThrow(() -> new IllegalArgumentException("Product not found"));
             User userChange = this.userRepository.findById(productChange.getUserId())
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
-            
+            Location location = this.locationRepository.findById(exchange.getLocationId())
+                    .orElseThrow(() -> new IllegalArgumentException("Location not found"));
             var userChangeResource = UserResource2FromEntityAssembler.toResourceFromEntity(userChange);
             return new ModifiedExchange(
                     exchange,
                     productOwn,
                     productChange,
                     userOwnResource,
-                    userChangeResource
+                    userChangeResource,
+                    location
             );
         }).collect(Collectors.toList());
     }
@@ -153,6 +167,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                     .orElseThrow(() -> new IllegalArgumentException("Product not found"));
             User userOwn = this.userRepository.findById(productOwn.getUserId())
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            Location location = this.locationRepository.findById(exchange.getLocationId())
+                    .orElseThrow(() -> new IllegalArgumentException("Location not found"));
             var userOwnResource = UserResource2FromEntityAssembler.toResourceFromEntity(userOwn);
 
             return new ModifiedExchange(
@@ -160,7 +176,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                     productOwn,
                     productChange,
                     userOwnResource,
-                    userChangeResource
+                    userChangeResource,
+                    location
             );
         }).collect(Collectors.toList());
     }
@@ -176,12 +193,12 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
 
         List<Exchange> exchangesOwn = this.exchangeRepository.findAllExchangesByProductOwnId_UserId(user)
                 .stream()
-                .filter(exchange -> "Aceptado".equals(exchange.getStatus()))
+                .filter(exchange -> "Completado".equals(exchange.getStatus()))
                 .toList();
 
         List<Exchange> exchangesChange = this.exchangeRepository.findAllExchangesByProductChangeId_UserId(user)
                 .stream()
-                .filter(exchange -> "Aceptado".equals(exchange.getStatus()))
+                .filter(exchange -> "Completado".equals(exchange.getStatus()))
                 .toList();
 
 
@@ -196,6 +213,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                     .orElseThrow(() -> new IllegalArgumentException("Product not found"));
             User userChange = this.userRepository.findById(productChange.getUserId())
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            Location location = this.locationRepository.findById(exchange.getLocationId())
+                    .orElseThrow(() -> new IllegalArgumentException("Location not found"));
             var userChangeResource = UserResource2FromEntityAssembler.toResourceFromEntity(userChange);
 
             return new ModifiedExchange(
@@ -203,7 +222,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                     productOwn,
                     productChange,
                     userOwnResource,
-                    userChangeResource
+                    userChangeResource,
+                    location
             );
         }).collect(Collectors.toList());
 
@@ -219,6 +239,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                     .orElseThrow(() -> new IllegalArgumentException("Product not found"));
             User userChange = this.userRepository.findById(productOwn.getUserId())
                     .orElseThrow(() -> new IllegalArgumentException("User not found"));
+            Location location = this.locationRepository.findById(exchange.getLocationId())
+                    .orElseThrow(() -> new IllegalArgumentException("Location not found"));
             var userChangeResource = UserResource2FromEntityAssembler.toResourceFromEntity(userChange);
 
             return new ModifiedExchange(
@@ -226,7 +248,8 @@ public class ExchangeQueryServiceImpl implements IExchangeQueryService {
                     productOwn,
                     productChange,
                     userChangeResource,
-                    userOwnResource
+                    userOwnResource,
+                    location
             );
         }).toList();
 

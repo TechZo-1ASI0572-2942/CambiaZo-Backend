@@ -3,10 +3,7 @@ package com.techzo.cambiazo.exchanges.domain.model.entities;
 
 import com.techzo.cambiazo.exchanges.domain.model.commands.CreateExchangeCommand;
 import com.techzo.cambiazo.shared.domain.model.aggregates.AuditableAbstractAggregateRoot;
-import jakarta.persistence.Column;
-import jakarta.persistence.Entity;
-import jakarta.persistence.JoinColumn;
-import jakarta.persistence.ManyToOne;
+import jakarta.persistence.*;
 import jakarta.validation.constraints.NotNull;
 import lombok.Getter;
 import lombok.Setter;
@@ -36,6 +33,8 @@ public class Exchange extends AuditableAbstractAggregateRoot<Exchange> {
     @NotNull(message = "Status is mandatory")
     private String status;
 
+    @Column(name = "location_id", nullable = false)
+    private Long locationId;
 
     private Long userOwnId;
 
@@ -49,6 +48,7 @@ public class Exchange extends AuditableAbstractAggregateRoot<Exchange> {
         this.productOwnId = productOwnId;
         this.productChangeId = productChangeId;
         this.status = command.status();
+        this.locationId = command.locationId();
     }
 
     public Exchange updateInformation(Product productOwnId, Product productChangeId, String status) {

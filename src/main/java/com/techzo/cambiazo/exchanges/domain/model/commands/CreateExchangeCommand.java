@@ -1,6 +1,6 @@
 package com.techzo.cambiazo.exchanges.domain.model.commands;
 
-public record CreateExchangeCommand(Long productOwnId, Long productChangeId, String status) {
+public record CreateExchangeCommand(Long productOwnId, Long productChangeId, String status, Long locationId) {
 
         public CreateExchangeCommand {
             if (productOwnId == null) {
@@ -11,6 +11,9 @@ public record CreateExchangeCommand(Long productOwnId, Long productChangeId, Str
             }
             if (status == null || status.isBlank()) {
                 throw new IllegalArgumentException("Status is required");
+            }
+            if (locationId == null) {
+                throw new IllegalArgumentException("Location ID is required");
             }
         }
 }

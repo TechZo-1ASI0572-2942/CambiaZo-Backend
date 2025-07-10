@@ -12,6 +12,7 @@ import com.techzo.cambiazo.exchanges.interfaces.rest.transform.CreateExchangeCom
 import com.techzo.cambiazo.exchanges.interfaces.rest.transform.ExchangeResourceFromEntityAssembler;
 import com.techzo.cambiazo.exchanges.interfaces.rest.transform.UpdateExchangeStatusCommandFromResourceAssembler;
 import io.swagger.v3.oas.annotations.Operation;
+import io.swagger.v3.oas.annotations.media.ExampleObject;
 import io.swagger.v3.oas.annotations.tags.Tag;
 import org.springframework.http.ResponseEntity;
 import org.springframework.web.bind.annotation.*;
@@ -23,7 +24,6 @@ import static org.springframework.http.HttpStatus.CREATED;
 @RestController
 @RequestMapping("/api/v2/exchanges")
 @Tag(name="Exchanges", description="Exchanges Management Endpoints")
-@Hidden
 public class ExchangeController {
     private final IExchangeCommandService exchangeCommandService;
 

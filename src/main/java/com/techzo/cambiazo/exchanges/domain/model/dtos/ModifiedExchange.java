@@ -3,6 +3,7 @@ package com.techzo.cambiazo.exchanges.domain.model.dtos;
 import com.techzo.cambiazo.exchanges.domain.model.entities.Exchange;
 import com.techzo.cambiazo.exchanges.domain.model.entities.Product;
 import com.techzo.cambiazo.iam.interfaces.rest.resources.UserResource2;
+import com.techzo.cambiazo.lockers.domain.model.entities.Location;
 import jakarta.persistence.Column;
 import jakarta.persistence.JoinColumn;
 import jakarta.persistence.ManyToOne;
@@ -30,11 +31,12 @@ public class ModifiedExchange {
     private LocalDate exchangeDate;
     private Date createdAt;
     private Date updatedAt;
+    private Location location;
 
     public ModifiedExchange(){}
 
 
-    public ModifiedExchange(Exchange exchange, Product productOwn, Product productChange, UserResource2 userOwn, UserResource2 userChange) {
+    public ModifiedExchange(Exchange exchange, Product productOwn, Product productChange, UserResource2 userOwn, UserResource2 userChange, Location location) {
         this.id = exchange.getId();
         this.productOwn = productOwn;
         this.productChange = productChange;
@@ -44,5 +46,6 @@ public class ModifiedExchange {
         this.updatedAt = exchange.getUpdatedAt();
         this.userOwn = userOwn;
         this.userChange = userChange;
+        this.location = location;
     }
 }
