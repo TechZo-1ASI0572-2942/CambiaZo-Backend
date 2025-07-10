@@ -13,7 +13,7 @@ jobs:
   build:
     runs-on: ubuntu-latest
     permissions:
-      contents: read
+      contents: read #This is required for actions/checkout
 
     steps:
       - uses: actions/checkout@v4
@@ -25,10 +25,6 @@ jobs:
           distribution: 'microsoft'
 
       - name: Build with Maven
-        env:
-          DB_URL: jdbc:mysql://cambiazoserver.mysql.database.azure.com:3306/cambiazomovil?allowPublicKeyRetrieval=true&useSSL=true
-          DB_USERNAME: cambiazoserver
-          DB_PASSWORD: techZomovil2024
         run: mvn clean install
 
       - name: Upload artifact for deployment job
@@ -40,25 +36,23 @@ jobs:
   deploy:
     runs-on: ubuntu-latest
     needs: build
-    environment:
-      name: 'Production'
-      url: ${{ steps.deploy-to-webapp.outputs.webapp-url }}
+    
     permissions:
-      id-token: write
-      contents: read
-
+      id-token: write #This is required for requesting the JWT
+      contents: read #This is required for actions/checkout
+  
     steps:
       - name: Download artifact from build job
         uses: actions/download-artifact@v4
         with:
           name: java-app
-
+      
       - name: Login to Azure
         uses: azure/login@v2
         with:
-          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_4E74FD4F95D04B39A83F2474831D77DE }}
-          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_2176E7DF88374AF3996F88C185CE5905 }}
-          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_D13063B9E33640E8B7D87B7E452C5510 }}
+          client-id: ${{ secrets.AZUREAPPSERVICE_CLIENTID_C71B5A7DE6FD49BBAA7368DEBAA1942B }}
+          tenant-id: ${{ secrets.AZUREAPPSERVICE_TENANTID_64E3B1C619A841EF87779A8D56BAEE3D }}
+          subscription-id: ${{ secrets.AZUREAPPSERVICE_SUBSCRIPTIONID_5E76AB16F50A4EB789959E7464608195 }}
 
       - name: Deploy to Azure Web App
         id: deploy-to-webapp
@@ -67,3 +61,4 @@ jobs:
           app-name: 'cambiazo-backend'
           slot-name: 'Production'
           package: '*.jar'
+          
